@@ -2,6 +2,20 @@
 
 Personal OpenCode skills and configuration.
 
+## Structure
+
+```
+AI/
+├── opencode/            ← OpenCode 配置
+│   ├── AGENTS.md           代理指令
+│   ├── opencode.jsonc      OpenCode 设置
+│   └── .opencode/          OpenCode 内部配置
+├── skills/              ← 自定义 skills
+│   └── obsidian-tool-logger/
+│       └── SKILL.md
+└── README.md
+```
+
 ## Skills
 
 ### obsidian-tool-logger
@@ -13,3 +27,9 @@ Personal OpenCode skills and configuration.
 ```bash
 npx skills add x1Rz47/AI@obsidian-tool-logger
 ```
+
+## Tips for other agents reading this
+
+- `opencode/AGENTS.md` 包含 agent 的指令配置
+- `opencode/opencode.jsonc` 是 OpenCode 的插件和设置
+- `skills/` 下每个目录是一个可安装的 skill
