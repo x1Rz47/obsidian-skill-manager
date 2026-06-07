@@ -1,21 +1,23 @@
 ---
 name: obsidian-skill-manager
-description: Use when the user asks to install, download, add, set up, or deploy any software component. Also use when organizing, renaming, or standardizing skill documentation in the vault
+description: Use when the user asks to install, download, add, set up, deploy, or sync software components. Also use when the vault's skill documentation needs organizing, renaming, or standardizing
 ---
 
-# Obsidian Tool Logger
+# Obsidian Skill Manager
 
 ## Overview
 
-Two workflows:
+Three workflows:
 
 **Recording:** When installing any tool, automatically gather information, execute installation, determine category, assign a number by popularity (GitHub stars), and record everything into the user's Obsidian vault following their template format. If the tool is already documented, update it instead of duplicating.
 
 **Deployment:** When setting up a new device, scan the vault for commonly-used tools (`常用: true`), infer the install commands from each document, execute them, and deploy corresponding opencode skills.
 
+**Sync:** When the user says "执行" or "sync", scan the vault for deleted or renamed files, detect gaps in numbering, and globally re-sort everything to maintain consistency.
+
 ## Triggering
 
-This skill activates in two modes:
+This skill activates in three modes:
 
 **Recording mode** — when the user acquires new software:
 - "安装 X" / "下载 X" / "添加 X"
@@ -26,6 +28,10 @@ This skill activates in two modes:
 **Deployment mode** — when the user sets up a new device:
 - "部署到这台电脑" / "安装常用" / "同步技能"
 - "deploy my skills" / "setup this machine"
+
+**Sync mode** — when the user wants to clean up and re-sort:
+- "执行" / "同步" / "清理"
+- "sync" / "clean up" / "reindex"
 
 ## Vault Configuration
 
@@ -57,6 +63,8 @@ All skill document filenames in the vault must follow:
 - Only letters, numbers, and hyphens allowed
 - First letter of each word capitalized (Pascal case), joined by hyphens
 - No Chinese characters, no spaces, no underscores, no special characters
+- No category suffix: Do not append category type (e.g., `-mcp`, `-plugin`, `-skill`) to filename — the directory path already indicates the type
+- Strip vendor prefix: Remove redundant vendor/framework prefixes (e.g., `opencode-X` → `X`, `vscode-X` → `X`) unless the prefix is part of the tool's official identity
 - Template files (`00-*`) are excluded from the numbering convention
 
 **Independent numbering per directory:**
@@ -66,6 +74,10 @@ All skill document filenames in the vault must follow:
 | `Skills/Superpowers/` | Fixed order (01-14, matches superpowers release order) |
 | `Skills/Gstack/` | Per-subdirectory independent numbering (01-N) |
 | `Skills/Obsidian/` | Fixed order (01-04) |
+| `MCP/` | Sorted by GitHub stars (desc) + alphabetical |
+| `插件/` | Sorted by GitHub stars (desc) + alphabetical |
+| `Config/` | Sorted by alphabetical order |
+| `其他/` | Sorted by GitHub stars (desc) + alphabetical |
 
 When moving or renaming files, always parse frontmatter `工具名` and convert to Pascal-kebab-case.
 
@@ -196,6 +208,44 @@ Present a summary table:
 | Data-Visualization | ✅ 已完成 |
 | Task-Management | ⏭️ 已存在 |
 
+## Sync Workflow (Clean and Re-Sort)
+
+This workflow runs independently. Use it when you've manually added, deleted, or renamed files in the vault, and need the numbering restored to a consistent state.
+
+### Step S1: Scan All Files
+
+1. Walk the target directory (default: `{VAULT_BASE}/Skills/General/`)
+2. Read every `.md` file and parse its frontmatter
+3. Build a manifest: what files exist, their `工具名`, and `Github星标`
+
+### Step S2: Detect Changes
+
+Compare existing files against the expected state:
+- **Deleted files**: Files that previously existed but are now gone
+- **Numbering gaps**: Missing sequence numbers (e.g. `01`, `02`, `04`)
+- **Naming mismatches**: Filenames that don't match the `工具名` convention
+- **Missing frontmatter fields**: Files without `tags:`, `常用:`, etc.
+
+### Step S3: Global Re-Sort
+
+1. Sort by `Github星标` descending (N/A → end)
+2. For equal stars, sort alphabetically by `工具名`
+3. Renumber from `01` upwards
+4. Rename all files to `{NN}-{Pascal-Kebab-Name}.md`
+5. Fix any files with missing frontmatter fields
+
+### Step S4: Report
+
+Present a summary:
+
+```
+🔍 同步完成 — Skills/General/
+  - 检测到删除: 2 (PDF, Playwright)
+  - 编号变化: 15→01, 16→02, ...
+  - 新编号范围: 01-14
+  - 修复 frontmatter: 0
+```
+
 ## Quality Checks
 
 - Verify the file was written correctly (read back first few lines)
@@ -218,6 +268,7 @@ Stop and re-evaluate if you catch yourself thinking:
 | "记录到目录就行了，不用管编号" | 必须全局排序并重编号 |
 | "它就是一个小工具，不用查 GitHub" | 每个工具都要查，无 GitHub 的标 N/A |
 | "这跟已有的工具很像，直接跳过" | 必须检查确切匹配，不能猜 |
+| "手动删了几个文件，编号我手动改一下就好" | 用 sync 工作流自动处理，不要手动改编号 |
 
 ## Edge Cases
 
@@ -236,6 +287,10 @@ Stop and re-evaluate if you catch yourself thinking:
 | Install command is ambiguous | Ask user to clarify before proceeding |
 | Tool is already installed | Skip, do not reinstall |
 | Install command fails | Record the error, continue with next tool |
+| User manually deleted files | Sync workflow detects and renumbers around them |
+| Numbering has gaps | Sync workflow closes all gaps |
+| Frontmatter is missing fields | Add empty fields: `tags:`, `常用: false` |
+| File was renamed but not numbered | Sanitize name to match convention |
 
 ## Rationalization Table
 
@@ -258,3 +313,5 @@ Stop and re-evaluate if you catch yourself thinking:
 - Don't guess about tool existence — read frontmatter to check
 - Don't install tools the user didn't mark as `常用` — only deploy what's explicitly flagged
 - Don't reinstall already-present tools without asking
+- Don't manually edit file numbers — use sync workflow instead
+- Don't skip frontmatter validation during sync — catch missing fields
