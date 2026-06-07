@@ -50,6 +50,15 @@ TEMPLATE   = {VAULT_BASE}/00-Skills功能介绍模板.md
 | Config | config files, dotfiles | `{VAULT_BASE}/Config/` |
 | Other | brew, pip, direct download | `{VAULT_BASE}/其他/` |
 
+## Device Configuration
+
+| Hostname | Device Name |
+|----------|-------------|
+| `x1Rz47-A1213` | Mac Mini |
+| *(configure on WPC)* | WPC |
+
+To determine the current device, check `hostname` and map it using this table. If the hostname is not yet mapped, ask the user to name the device.
+
 ## Naming Conventions
 
 All skill document filenames in the vault must follow:
@@ -107,6 +116,8 @@ If GitHub fetch fails (network error, no GitHub repo), set `Github星标: N/A`. 
 
 Run the installation command. Wait for it to complete. Verify success.
 
+After installation, determine the current device name from the Device Configuration table. Add the device name to `使用设备` in the frontmatter (e.g. `使用设备:\n  - Mac Mini`).
+
 ### Step 4: Check for Existing Document
 
 Before creating a new file:
@@ -157,6 +168,8 @@ Github星标: <star-count>
 创建日期: <today>
 更新日期: <today>
 常用: false
+使用设备:
+  - Mac Mini
 ---
 ```
 
@@ -212,21 +225,35 @@ Present a summary table:
 
 This workflow runs independently. Use it when you've manually added, deleted, or renamed files in the vault, and need the numbering restored to a consistent state.
 
-### Step S1: Scan All Files
+### Step S1: Determine Current Device
+
+1. Run `hostname` to get the current machine's hostname
+2. Look up the device name in the Device Configuration table
+3. If the hostname is not mapped, ask the user to identify the device
+
+### Step S2: Scan All Files
 
 1. Walk the target directory (default: `{VAULT_BASE}/Skills/General/`)
 2. Read every `.md` file and parse its frontmatter
-3. Build a manifest: what files exist, their `工具名`, and `Github星标`
+3. Build a manifest: what files exist, their `工具名`, `Github星标`, `使用设备`, and install commands
 
-### Step S2: Detect Changes
+### Step S3: Detect Changes
 
 Compare existing files against the expected state:
 - **Deleted files**: Files that previously existed but are now gone
 - **Numbering gaps**: Missing sequence numbers (e.g. `01`, `02`, `04`)
 - **Naming mismatches**: Filenames that don't match the `工具名` convention
-- **Missing frontmatter fields**: Files without `tags:`, `常用:`, etc.
+- **Missing frontmatter fields**: Files without `使用设备:`, `常用:`, etc.
+- **Device tracking**: For each skill, infer its install command and check if the tool is installed on the current device:
+  - `which <command>` for CLI tools
+  - `brew list` for Homebrew packages
+  - `npm list -g` for global npm packages
+  - `pip list` for Python packages
+  - `npx skills list -g` for opencode skills
+  If the tool IS installed and the current device is NOT in `使用设备`, add it.
+  If the tool is NOT installed, leave `使用设备` unchanged (do not remove existing entries).
 
-### Step S3: Global Re-Sort
+### Step S5: Global Re-Sort
 
 1. Sort by `Github星标` descending (N/A → end)
 2. For equal stars, sort alphabetically by `工具名`
@@ -234,16 +261,17 @@ Compare existing files against the expected state:
 4. Rename all files to `{NN}-{Pascal-Kebab-Name}.md`
 5. Fix any files with missing frontmatter fields
 
-### Step S4: Report
+### Step S6: Report
 
 Present a summary:
 
 ```
 🔍 同步完成 — Skills/General/
+  - 当前设备: Mac Mini
   - 检测到删除: 2 (PDF, Playwright)
-  - 编号变化: 15→01, 16→02, ...
   - 新编号范围: 01-14
   - 修复 frontmatter: 0
+  - 设备标记更新: 5 (新增 Mac Mini)
 ```
 
 ## Quality Checks
@@ -269,6 +297,7 @@ Stop and re-evaluate if you catch yourself thinking:
 | "它就是一个小工具，不用查 GitHub" | 每个工具都要查，无 GitHub 的标 N/A |
 | "这跟已有的工具很像，直接跳过" | 必须检查确切匹配，不能猜 |
 | "手动删了几个文件，编号我手动改一下就好" | 用 sync 工作流自动处理，不要手动改编号 |
+| "这个工具就在这台电脑上用的，不用写设备名" | 必须写！sync 会自动检测补充 |
 
 ## Edge Cases
 
@@ -291,6 +320,10 @@ Stop and re-evaluate if you catch yourself thinking:
 | Numbering has gaps | Sync workflow closes all gaps |
 | Frontmatter is missing fields | Add empty fields: `tags:`, `常用: false` |
 | File was renamed but not numbered | Sanitize name to match convention |
+| Hostname not found in Device Configuration | Ask user to identify the current device |
+| Tool install detection is ambiguous | Check multiple methods (`which`, `brew list`, etc.) |
+| Device already in `使用设备` | Skip, do not duplicate |
+| Tool not installed on current device | Leave `使用设备` unchanged |
 
 ## Rationalization Table
 
