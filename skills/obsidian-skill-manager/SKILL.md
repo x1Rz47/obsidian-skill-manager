@@ -1,5 +1,5 @@
 ---
-name: obsidian-tool-logger
+name: obsidian-skill-manager
 description: Use when the user asks to install, download, add, set up, or deploy any software component. Also use when organizing, renaming, or standardizing skill documentation in the vault
 ---
 
