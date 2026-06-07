@@ -13,6 +13,8 @@ AI/
 ├── skills/              ← 自定义 skills
 │   └── obsidian-tool-logger/
 │       └── SKILL.md
+├── scripts/             ← 工具脚本
+├── docs/                ← 文档/笔记
 └── README.md
 ```
 
