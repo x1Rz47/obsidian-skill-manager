@@ -31,7 +31,7 @@ This skill activates in two modes:
 
 ```
 VAULT_BASE = /Users/x1rz47/Library/CloudStorage/SynologyDrive-x1Rz47/5.个人资料/1.知识库/个人知识库/AI
-TEMPLATE   = {VAULT_BASE}/Skills/00-Skills功能介绍模板.md
+TEMPLATE   = {VAULT_BASE}/00-Skills功能介绍模板.md
 ```
 
 ## Category Directories
