@@ -223,7 +223,7 @@ Present a summary table:
 
 ## Sync Workflow (Clean and Re-Sort)
 
-This workflow runs independently. Use it when you've manually added, deleted, or renamed files in the vault, and need the numbering restored to a consistent state.
+This workflow runs independently. Use it when you've manually added, deleted, or renamed files in the vault, and need the numbering restored to a consistent state across all directories.
 
 ### Step S1: Determine Current Device
 
@@ -231,29 +231,47 @@ This workflow runs independently. Use it when you've manually added, deleted, or
 2. Look up the device name in the Device Configuration table
 3. If the hostname is not mapped, ask the user to identify the device
 
-### Step S2: Scan All Files
+### Step S2: Scan All Vault Directories
 
-1. Walk the target directory (default: `{VAULT_BASE}/Skills/General/`)
-2. Read every `.md` file and parse its frontmatter
-3. Build a manifest: what files exist, their `工具名`, `Github星标`, `使用设备`, and install commands
+Walk ALL `.md` files under `{VAULT_BASE}` (excluding `00-Skills功能介绍模板.md`) grouped by directory:
 
-### Step S3: Detect Changes
+| Directory | Numbering Rule | Frontmatter Required |
+|-----------|---------------|---------------------|
+| `Skills/General/` | By GitHub stars (desc) | Full template |
+| `Skills/Superpowers/` | Fixed (01-14) | Full template |
+| `Skills/Gstack/*/` | Per-subdir independent (01-N) | Full template |
+| `Skills/Obsidian/` | Fixed (01-04) | Full template |
+| `MCP/` | Manual (01-N) | Full template |
+| `插件/` | Manual (01-N) | Full template |
+| `Config/` | Manual (01-N) | Full template |
 
-Compare existing files against the expected state:
-- **Deleted files**: Files that previously existed but are now gone
-- **Numbering gaps**: Missing sequence numbers (e.g. `01`, `02`, `04`)
-- **Naming mismatches**: Filenames that don't match the `工具名` convention
-- **Missing frontmatter fields**: Files without `使用设备:`, `常用:`, etc.
-- **Device tracking**: For each skill, infer its install command and check if the tool is installed on the current device:
-  - `which <command>` for CLI tools
-  - `brew list` for Homebrew packages
-  - `npm list -g` for global npm packages
-  - `pip list` for Python packages
-  - `npx skills list -g` for opencode skills
-  If the tool IS installed and the current device is NOT in `使用设备`, add it.
-  If the tool is NOT installed, leave `使用设备` unchanged (do not remove existing entries).
+For each file, parse its frontmatter and build a manifest: `工具名`, `Github星标`, `使用设备`, `常用`, and install commands.
 
-### Step S5: Global Re-Sort
+### Step S3: Detect and Fix Issues Per File
+
+For every file across all directories:
+
+- **Missing `使用设备:`** → Add with current device name
+- **Missing `常用:`** → Add `常用: false`
+- **Missing `tags:`** → Add `tags:`
+- **Naming mismatches** → Rename to `{NN}-{Pascal-Kebab-Name}.md`
+- **Malformed frontmatter** → Fix YAML formatting (e.g. comma-separated→list, empty values→N/A, wrong field names)
+
+### Step S4: Device Tracking
+
+For each skill, infer its install command and check if the tool is installed on the current device:
+- `which <command>` for CLI tools
+- `brew list` for Homebrew packages
+- `npm list -g` for global npm packages
+- `pip list` for Python packages
+- `npx skills list -g` for opencode skills
+
+If the tool IS installed and the current device is NOT in `使用设备`, add it.
+If the tool is NOT installed, leave `使用设备` unchanged (do not remove existing entries).
+
+### Step S5: Global Re-Sort (General/ only)
+
+For `Skills/General/` only — other directories keep their fixed numbering:
 
 1. Sort by `Github星标` descending (N/A → end)
 2. For equal stars, sort alphabetically by `工具名`
@@ -266,12 +284,13 @@ Compare existing files against the expected state:
 Present a summary:
 
 ```
-🔍 同步完成 — Skills/General/
+🔍 同步完成 — 全 vault
   - 当前设备: Mac Mini
-  - 检测到删除: 2 (PDF, Playwright)
-  - 新编号范围: 01-14
-  - 修复 frontmatter: 0
-  - 设备标记更新: 5 (新增 Mac Mini)
+  - 扫描目录: 7
+  - 扫描文件: 80
+  - 修复 frontmatter: 3
+  - 设备标记更新: 2
+  - General/ 新编号范围: 01-14
 ```
 
 ## Quality Checks
