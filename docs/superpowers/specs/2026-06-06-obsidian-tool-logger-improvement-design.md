@@ -64,7 +64,24 @@ After: Use when the user asks to install, download, add, or set up any software 
 
 详见 `SKILL.md` 中的对应章节。
 
-### 7. 新增——部署到新设备
+### 7. 命名规范
+
+在 SKILL.md 中新增 Naming Conventions 章节，规定：
+
+**格式：** `{NN}-{Pascal-Kebab-Name}.md`
+- 全英文，Pascal-kebab-case
+- 从 frontmatter `工具名` 自动转换
+- 每目录独立编号
+
+### 8. 文件迁移（一次性执行）
+
+将 `Skills/` 根目录 6 个 .md 文件移入 `Skills/General/`:
+- `find-skills.md` → 替换已有的 `01-Find-Skills.md`（同一工具，数据更新）
+- `manim-video.md`, `obsidian-tool-logger.md`, `pdf.md`, `playwright.md`, `video-use.md` → 移入 General 并参与星标排序
+
+合并后共 16 个文件，按 GitHub 星标全局重排。
+
+### 9. 新增——部署到新设备
 
 **触发词**：`部署到这台电脑` / `安装常用` / `同步技能` / `deploy`
 

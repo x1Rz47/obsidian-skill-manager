@@ -1,6 +1,6 @@
 ---
 name: obsidian-tool-logger
-description: Use when the user asks to install, download, add, set up, or deploy any software component including skills, plugins, MCP servers, npm packages, or configurations
+description: Use when the user asks to install, download, add, set up, or deploy any software component. Also use when organizing, renaming, or standardizing skill documentation in the vault
 ---
 
 # Obsidian Tool Logger
@@ -43,6 +43,31 @@ TEMPLATE   = {VAULT_BASE}/Skills/00-Skills功能介绍模板.md
 | MCP | MCP server | `{VAULT_BASE}/MCP/` |
 | Config | config files, dotfiles | `{VAULT_BASE}/Config/` |
 | Other | brew, pip, direct download | `{VAULT_BASE}/其他/` |
+
+## Naming Conventions
+
+All skill document filenames in the vault must follow:
+
+**Format:** `{NN}-{English-Name}.md`
+- `NN`: 2-digit number (`01`, `02`...`99`)
+- `English-Name`: Pascal-kebab-case, English only
+- Example: `12-Playwright.md`, `04-Data-Visualization.md`
+
+**Rules:**
+- Only letters, numbers, and hyphens allowed
+- First letter of each word capitalized (Pascal case), joined by hyphens
+- No Chinese characters, no spaces, no underscores, no special characters
+- Template files (`00-*`) are excluded from the numbering convention
+
+**Independent numbering per directory:**
+| Directory | Numbering Rule |
+|-----------|---------------|
+| `Skills/General/` | Sorted by GitHub stars (desc) + alphabetical |
+| `Skills/Superpowers/` | Fixed order (01-14, matches superpowers release order) |
+| `Skills/Gstack/` | Per-subdirectory independent numbering (01-N) |
+| `Skills/Obsidian/` | Fixed order (01-04) |
+
+When moving or renaming files, always parse frontmatter `工具名` and convert to Pascal-kebab-case.
 
 ## Recording Workflow
 
@@ -94,8 +119,10 @@ Before creating a new file:
    - Primary: star count descending
    - Secondary: tool name alphabetically (for equal star counts)
 4. Assign new numbers: `01`, `02`, `03`...
-5. Rename files on disk: `{NN}-{Tool-Name}.md`
-6. Update numbers in the new file's filename
+5. Determine the filename from `工具名` in frontmatter:
+   - Convert to Pascal-kebab-case: `Find Skills` → `Find-Skills`, `Create Agents.md` → `Create-Agentsmd`
+   - Result: `{NN}-{Pascal-Kebab-Name}.md`
+6. Rename files on disk to match: `{NN}-{Pascal-Kebab-Name}.md`
 
 Edge case — tools with `N/A` stars: always sort to the end, ordered alphabetically among themselves.
 
