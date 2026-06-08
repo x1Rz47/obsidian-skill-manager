@@ -2,7 +2,7 @@
 name: obsidian-skill-manager
 description: Use when the user asks to install, download, add, set up, deploy, or sync software components. Also use when the vault's skill documentation needs organizing, renaming, or standardizing. Also use when the vault documentation template changes and all files need syncing to match.
 template_hash: 623d8f431bd73b60bb789b16dec3d9b5
-template_checked: 2026-06-07
+template_checked: 2026-06-08
 ---
 
 # Obsidian Skill Manager
@@ -45,9 +45,16 @@ This skill activates in three modes:
 
 ## Vault Configuration
 
+**macOS (Mac Mini):**
 ```
 VAULT_BASE = /Users/x1rz47/Library/CloudStorage/SynologyDrive-x1Rz47/5.个人资料/1.知识库/个人知识库/AI
 TEMPLATE   = {VAULT_BASE}/00-工具功能介绍模板.md
+```
+
+**Windows (WPC):**
+```
+VAULT_BASE = D:\SynologyDrive\5.个人资料\1.知识库\个人知识库\AI
+TEMPLATE   = {VAULT_BASE}\00-工具功能介绍模板.md
 ```
 
 ## Category Directories
@@ -55,15 +62,21 @@ TEMPLATE   = {VAULT_BASE}/00-工具功能介绍模板.md
 | Type | Install Source | Target Path |
 |------|---------------|-------------|
 | Skill | `npx skills add`, `npm install -g` | `{VAULT_BASE}/辅助工具/Skills/General/` |
+| Obsidian Skill | Obsidian 相关的 agent skill | `{VAULT_BASE}/辅助工具/Skills/Obsidian/` |
 | 插件 | vscode, obsidian, browser extensions | `{VAULT_BASE}/辅助工具/插件/` |
 | MCP | MCP server | `{VAULT_BASE}/辅助工具/MCP/` |
+
+**Category Override Rules:**
+- If a skill is clearly related to a specific domain (e.g., Obsidian, Gstack, Codex), place it in that domain's directory, NOT General/
+- The category directories above are defaults, but domain-specific directories take priority
+- When mapping: check if the skill's name, tags, or description reference a specific directory first
 
 ## Device Configuration
 
 | Hostname | Device Name |
 |----------|-------------|
 | `x1Rz47-A1213` | Mac Mini |
-| *(configure on WPC)* | WPC |
+| `WPC-x1Rz47` | WPC |
 
 To determine the current device, check `hostname` and map it using this table. If the hostname is not yet mapped, ask the user to name the device.
 
@@ -73,13 +86,13 @@ To determine the current device, check `hostname` and map it using this table. I
 
 | 工具类型 | 判定方式 | 示例 |
 |---------|---------|------|
-| agent skill | `npx skills list -g` 可见，或在 `~/.config/opencode/skills/` 目录下 | `video-use` → `- Mac Mini` (skils add过) |
+| agent skill | `npx skills list -g` 可见，或在 `~/.config/opencode/skills/` (Mac) / `~\.agents\skills\` (Windows) 目录下 | `video-use` → `- Mac Mini` / `- WPC` |
 | superpowers 整合包 | 包已安装 (npm cache)，技能在缓存目录存在 | `brainstorming` → `- Mac Mini` |
 | MCP server | `opencode.jsonc` 的 `mcpServers` 中已配置 | `markitdown-mcp` → `- Mac Mini` |
-| CLI 工具 | `which <tool>` 能找到 | `ffmpeg` → `- Mac Mini` |
-| brew 包 | `brew list <pkg>` 成功 | `gh` → `- Mac Mini` |
-| npm 全局包 | `npm list -g <pkg>` 可见 | `bun` → `- Mac Mini` |
-| pip 包 | `pip3 list \| grep <pkg>` 有结果 | `openai-whisper` → `- Mac Mini` |
+| CLI 工具 | `which <tool>` (Mac) / `where.exe <tool>` (Windows) 能找到 | `ffmpeg` → `- Mac Mini` / `- WPC` |
+| brew 包 | `brew list <pkg>` 成功 (仅 Mac) | `gh` → `- Mac Mini` |
+| npm 全局包 | `npm list -g <pkg>` 可见 | `bun` → `- Mac Mini` / `- WPC` |
+| pip 包 | `pip3 list \| grep <pkg>` (Mac) / `pip list \| findstr <pkg>` (Windows) 有结果 | `openai-whisper` → `- Mac Mini` |
 | 工作流/流程文档 | 不可安装，永远不写设备名 | Gstack、Obsidian 语法参考 → `N/A` |
 
 **常见的错误模式（禁止）：**
@@ -116,7 +129,7 @@ All skill document filenames in the vault must follow:
 | `辅助工具/Skills/Awesome-Copilot/` | Sorted by GitHub stars (desc) + alphabetical |
 | `辅助工具/Skills/Codex/` | Manual (no stars — Codex-native skills) |
 | `辅助工具/Skills/Gstack/` | Per-subdirectory independent numbering (01-N) |
-| `辅助工具/Skills/Obsidian/` | Fixed order (01-04) |
+| `辅助工具/Skills/Obsidian/` | Sorted by GitHub stars (desc) + alphabetical |
 | `辅助工具/MCP/` | Sorted by GitHub stars (desc) + alphabetical |
 | `辅助工具/插件/` | Sorted by GitHub stars (desc) + alphabetical |
 
@@ -152,7 +165,7 @@ Determine:
 - **Name**: What is it called?
 - **Type**: skill / 插件 / MCP / npm package / config / other
 - **Source**: GitHub / npm / brew / pip / direct download
-- **Category**: Map source to target directory using the table above
+- **Category**: Map source to target directory using the table above. Check Category Override Rules first before falling back to the source-based mapping.
 
 ### Step 2: Gather Information
 
@@ -320,7 +333,7 @@ Walk ALL `.md` files under `{VAULT_BASE}` (excluding `00-工具功能介绍模�
 | `辅助工具/Skills/Awesome-Copilot/` | By GitHub stars (desc) | Full template |
 | `辅助工具/Skills/Codex/` | Manual (01-N) | Full template |
 | `辅助工具/Skills/Gstack/*/` | Per-subdir independent (01-N) | Full template |
-| `辅助工具/Skills/Obsidian/` | Fixed (01-04) | Full template |
+| `辅助工具/Skills/Obsidian/` | By GitHub stars (desc) | Full template |
 | `辅助工具/MCP/` | Manual (01-N) | Full template |
 | `辅助工具/插件/` | Manual (01-N) | Full template |
 
@@ -389,9 +402,18 @@ Update `使用设备:` per file:
 | Tool NOT installed but `使用设备:` has entries from other devices | Leave existing entries unchanged |
 | Workflow/process doc (Gstack, Superpowers) | Set `使用设备: N/A` (not installable software)
 
-### Step S5: Global Re-Sort (General/ & Knowledge-Work/ & Awesome-Copilot/)
+### Step S5: Global Re-Sort (General/ & Knowledge-Work/ & Awesome-Copilot/ & Obsidian/)
 
-For `辅助工具/Skills/General/`, `辅助工具/Skills/Knowledge-Work/`, `辅助工具/Skills/Awesome-Copilot/`, and `辅助工具/Skills/Superpowers/扩展技能/` — other directories keep their fixed numbering:
+For `辅助工具/Skills/General/`, `辅助工具/Skills/Knowledge-Work/`, `辅助工具/Skills/Awesome-Copilot/`, `辅助工具/Skills/Superpowers/扩展技能/`, and `辅助工具/Skills/Obsidian/` — other directories keep their fixed numbering:
+
+**When renaming multiple files in a directory, handle rename collisions:**
+- If renaming A→3 and B→A and C→B, use temp names:
+  1. Rename C → temp-C
+  2. Rename B → C
+  3. Rename A → B
+  4. Rename temp-C → A
+- NEVER delete a file and recreate it — you will lose content
+- Verify no 0-byte files after the rename batch completes
 
 1. Sort by `Github星标` descending (N/A → end)
 2. For equal stars, sort alphabetically by `工具名`
@@ -413,6 +435,7 @@ Present a summary:
   - General/ 新编号范围: 01-05
   - Knowledge-Work/ 新编号范围: 01-04
   - Awesome-Copilot/ 新编号范围: 01-03
+  - Obsidian/ 新编号范围: 01-05
   - Codex/ 当前范围: 01-02
 ```
 
@@ -508,6 +531,7 @@ Do NOT overwrite or remove content within sections — only add/remove/reorder t
 - Sections should follow template structure
 - No placeholder text left in the document
 - After renumbering, verify no file is missing or has a wrong number
+- **Before ANY batch operation** (sync, re-sort, batch edit), create a temp backup of all files in the target directory. Verify backup exists before proceeding.
 
 ## Red Flags
 
@@ -525,6 +549,10 @@ Stop and re-evaluate if you catch yourself thinking:
 | "手动删了几个文件，编号我手动改一下就好" | 用 sync 工作流自动处理，不要手动改编号 |
 | "这个工具就在这台电脑上用的，不用写设备名" | 必须写！sync 会自动检测补充 |
 | "模板只改了一点点，不用同步" | 模板变了必须运行 Template Sync，即使改动很小 — 字段会被慢慢遗忘 |
+| "PowerShell 脚本改 YAML 没问题" | 必须用结构化 YAML 解析，字符串替换可能产生空文件 |
+| "这个 Obsidian 技能放到 General/ 就行了" | Obsidian 相关的技能必须放到 Obsidian/ 目录 |
+| "先批量改了再说，备份不重要" | 批量修改前必须先创建备份，否则一个错误就毁了全部文件 |
+| "移动文件到另一个目录，改个数字就行" | 同时涉及源目录和目标目录的编号更新，重命名可能有冲突 |
 
 ## Edge Cases
 
@@ -555,6 +583,12 @@ Stop and re-evaluate if you catch yourself thinking:
 | Template hash mismatch detected | Ask user whether to run Template Sync |
 | Template hash not set in SKILL.md | Compute and set during first Template Sync run |
 | User declines template sync | Update `template_hash` to current, skip syncing |
+| Moving file between directories | **BOTH** source and target need renumbering. Source: remove and compress numbering. Target: insert file and renumber entire directory. NEVER just rename — you must rename ALL files in both directories if sorting changes. |
+| File rename collision (rename A→3 when 3 exists) | Use an intermediate temp name: A→temp, B→A, C→B, temp→C |
+| Batch editing frontmatter files | ALWAYS create a temp backup first: copy all files to `{dir}/.backup/` before any changes. If an edit produces a 0-byte file, restore from backup immediately. |
+| Superpowers core skills (核心技能) | Detectable via npm cache (`{npm-cache}/superpowers/skills/`). On Windows: `$env:USERPROFILE\.cache\opencode\packages\superpowers@git+https_\github.com\obra\superpowers.git\node_modules\superpowers\skills\`. On Mac: via npm cache. NOT found via `npx skills list -g`. |
+| Script-based batch edit produces 0-byte files | CRITICAL: Stop immediately. Restore all files from temp backup. Do NOT attempt to recreate from memory — you will lose content. Use `git checkout` or the backup folder. |
+| Skill is Obsidian/MCP/Gstack/Codex domain-specific | Place in the domain's directory, NOT General/. See Category Override Rules. |
 
 ## Rationalization Table
 
@@ -583,3 +617,9 @@ Stop and re-evaluate if you catch yourself thinking:
 - Don't keep stale fields when the template removes or renames them
 - Don't leave `使用设备: False` (YAML boolean corruption) — fix to `no` or proper list format
 - Don't treat template syncing as optional — when the template changes, all files must follow
+- Don't use PowerShell string manipulation (regex, -replace, string concatenation) to edit YAML frontmatter — YAML is structured data, use proper YAML parsing or read/write the whole frontmatter block carefully
+- Don't batch-edit frontmatter files without creating backups first — a single script error can corrupt all files in a directory
+- **CRITICAL: Always create a temp backup of all files in a directory before running any batch edit operation.** If using a script, first copy all files to a temp restore folder. Verify the backup exists before making changes.
+- Don't move files between directories without handling both source and target numbering — both directories need renumbering, and file rename conflicts (01→03 when 03 exists) require intermediate temp names
+- Don't assume Obsidian skills belong in General/ — check if the skill is Obsidian-specific and put it in `Obsidian/` instead
+- Don't use batch string replacement (`-replace`) on YAML frontmatter — the result may silently produce empty files

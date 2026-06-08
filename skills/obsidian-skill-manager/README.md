@@ -20,7 +20,7 @@ An OpenCode skill that manages tool documentation in an Obsidian vault. Automati
 | `Superpowers/核心技能/` | Core superpowers skills (14) | Fixed 01-14 |
 | `Superpowers/扩展技能/` | Extended superpowers skills | By GitHub stars |
 | `Gstack/` | Workflow/process docs | Per-subdir numbering |
-| `Obsidian/` | Obsidian-specific skills | Fixed |
+| `Obsidian/` | Obsidian-specific skills | By GitHub stars |
 | `MCP/` | MCP server tools | Manual |
 | `插件/` | Plugins | Manual |
 
