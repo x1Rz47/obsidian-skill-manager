@@ -13,14 +13,17 @@ An OpenCode skill that manages tool documentation in an Obsidian vault. Automati
 
 | Directory | Content | Sorting |
 |-----------|---------|---------|
-| `General/` | Standalone agent skills | By GitHub stars |
-| `Knowledge-Work/` | Knowledge work skills | By GitHub stars |
-| `Awesome-Copilot/` | Skills from github/awesome-copilot | By GitHub stars |
-| `Codex/` | Codex-native skills | Manual |
-| `Superpowers/核心技能/` | Core superpowers skills (14) | Fixed 01-14 |
-| `Superpowers/扩展技能/` | Extended superpowers skills | By GitHub stars |
-| `Gstack/` | Workflow/process docs | Per-subdir numbering |
-| `Obsidian/` | Obsidian-specific skills | By GitHub stars |
+| `开发辅助/` | Development & code review skills | By GitHub stars |
+| `搜索代理/` | Search & info retrieval skills | By GitHub stars |
+| `浏览器自动化/` | Browser automation skills | By GitHub stars |
+| `媒体创作/` | Video & animation creation skills | By GitHub stars |
+| `知识管理/` | Knowledge management skills | By GitHub stars |
+| `启动验证/` | Startup validation skills | By GitHub stars |
+| `效率工具/` | Utility & orchestration skills | By GitHub stars |
+| `工作流指南/` | Workflow/process docs | Per-subdir numbering |
+| `平台技能/Superpowers/核心技能/` | Core superpowers skills (14) | Fixed 01-14 |
+| `平台技能/Codex/` | Codex-native skills | Manual |
+| `平台技能/Obsidian/` | Obsidian-specific skills | By GitHub stars |
 | `MCP/` | MCP server tools | Manual |
 | `插件/` | Plugins | Manual |
 
