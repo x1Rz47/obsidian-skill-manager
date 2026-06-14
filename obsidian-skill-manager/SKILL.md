@@ -396,6 +396,7 @@ Kept in global copy at `~/.config/opencode/skills/obsidian-skill-manager/SKILL.m
 | `Goal Prompt Builder` / `goal-prompt-builder` | `https://github.com/win4r/goal-prompt-builder` |
 | `PDF` / `pdf` (Codex) | `Codex 自带` |
 | `Playwright` / `playwright` (Codex) | `Codex 自带` |
+| `Agent Browser` / `agent-browser` | `https://github.com/vercel-labs/agent-browser` |
 | (Add rows as new tools are installed)
 
 ### Step S4: Device Tracking
